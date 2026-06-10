@@ -1,26 +1,202 @@
 @import "tailwindcss";
+@import "tw-animate-css";
 
+@custom-variant dark (&:is(.dark *));
+
+/*
+ * Identidade "Almanaque de números": papel quente + tinta quente, acento
+ * âmbar/ocre (--brand) como assinatura, display em serifa (Fraunces) e números
+ * em mono. As cores das loterias (--mega/--lotofacil) e dos gráficos carregam
+ * significado e são preservadas.
+ */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: oklch(0.985 0.008 84);
+  --foreground: oklch(0.24 0.012 64);
+  --card: oklch(0.998 0.004 84);
+  --card-foreground: oklch(0.24 0.012 64);
+  --popover: oklch(0.998 0.004 84);
+  --popover-foreground: oklch(0.24 0.012 64);
+  --primary: oklch(0.27 0.014 64);
+  --primary-foreground: oklch(0.985 0.008 84);
+  --secondary: oklch(0.955 0.01 82);
+  --secondary-foreground: oklch(0.27 0.014 64);
+  --muted: oklch(0.955 0.01 82);
+  --muted-foreground: oklch(0.47 0.014 66);
+  --accent: oklch(0.95 0.013 82);
+  --accent-foreground: oklch(0.27 0.014 64);
+  --destructive: oklch(0.55 0.2 25);
+  --destructive-foreground: oklch(0.985 0.008 84);
+  --success: oklch(0.52 0.13 155);
+  /* Acento assinatura — âmbar/ocre. */
+  --brand: oklch(0.705 0.118 70);
+  --brand-foreground: oklch(0.26 0.045 66);
+  /* Âmbar para TEXTO/ícones sobre fundo claro — escuro o bastante p/ 4.5:1. */
+  --brand-strong: oklch(0.5 0.13 66);
+  --border: oklch(0.905 0.009 82);
+  --input: oklch(0.905 0.009 82);
+  --ring: oklch(0.705 0.118 70);
+  --radius: 0.625rem;
+
+  --chart-1: oklch(0.52 0.13 252);
+  --chart-2: oklch(0.58 0.12 168);
+  --chart-3: oklch(0.68 0.14 78);
+  --chart-4: oklch(0.56 0.18 28);
+  --chart-5: oklch(0.5 0.16 302);
+
+  --mega: oklch(0.52 0.15 152);
+  --mega-foreground: oklch(0.99 0.012 152);
+  --lotofacil: oklch(0.5 0.19 322);
+  --lotofacil-foreground: oklch(0.99 0.012 322);
+}
+
+.dark {
+  --background: oklch(0.185 0.008 66);
+  --foreground: oklch(0.92 0.006 84);
+  --card: oklch(0.22 0.009 66);
+  --card-foreground: oklch(0.92 0.006 84);
+  --popover: oklch(0.22 0.009 66);
+  --popover-foreground: oklch(0.92 0.006 84);
+  --primary: oklch(0.92 0.006 84);
+  --primary-foreground: oklch(0.2 0.009 66);
+  --secondary: oklch(0.27 0.01 66);
+  --secondary-foreground: oklch(0.92 0.006 84);
+  --muted: oklch(0.27 0.01 66);
+  --muted-foreground: oklch(0.76 0.012 70);
+  --accent: oklch(0.305 0.012 66);
+  --accent-foreground: oklch(0.92 0.006 84);
+  --destructive: oklch(0.62 0.2 26);
+  --destructive-foreground: oklch(0.98 0.003 84);
+  --success: oklch(0.62 0.13 155);
+  --brand: oklch(0.78 0.12 74);
+  --brand-foreground: oklch(0.2 0.03 66);
+  --brand-strong: oklch(0.82 0.12 76);
+  --border: oklch(0.31 0.009 66);
+  --input: oklch(0.34 0.009 66);
+  --ring: oklch(0.78 0.12 74);
+
+  --chart-1: oklch(0.65 0.13 252);
+  --chart-2: oklch(0.66 0.12 168);
+  --chart-3: oklch(0.74 0.14 78);
+  --chart-4: oklch(0.66 0.18 28);
+  --chart-5: oklch(0.64 0.16 302);
+
+  --mega: oklch(0.62 0.15 152);
+  --mega-foreground: oklch(0.14 0.02 152);
+  --lotofacil: oklch(0.62 0.19 322);
+  --lotofacil-foreground: oklch(0.14 0.02 322);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-success: var(--success);
+  --color-brand: var(--brand);
+  --color-brand-foreground: var(--brand-foreground);
+  --color-brand-strong: var(--brand-strong);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-mega: var(--mega);
+  --color-mega-foreground: var(--mega-foreground);
+  --color-lotofacil: var(--lotofacil);
+  --color-lotofacil-foreground: var(--lotofacil-foreground);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --font-sans: var(--font-hanken), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-fraunces), Georgia, "Times New Roman", serif;
+  --font-mono: var(--font-plex-mono), ui-monospace, monospace;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer base {
+  * {
+    border-color: var(--border);
+  }
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    background: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-sans);
+    font-size: 16px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    line-height: 1.12;
+  }
+  ::selection {
+    background: color-mix(in oklch, var(--brand) 30%, transparent);
+  }
+  /* Anel de foco visível para teclado (links e elementos sem estilo próprio).
+     Botões/inputs definem `outline-none` + ring próprio e não são afetados. */
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+    border-radius: 3px;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer utilities {
+  .tnum {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum";
+  }
+  /* Textura sutil de volante (grade de pontos). */
+  .bg-dotgrid {
+    background-image: radial-gradient(
+      color-mix(in oklch, var(--foreground) 13%, transparent) 1px,
+      transparent 1.5px
+    );
+    background-size: 22px 22px;
+  }
+  /* Revelação escalonada no carregamento (use com style: animationDelay). */
+  .reveal {
+    animation: reveal-up 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  }
+}
+
+@keyframes reveal-up {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    animation: none !important;
+  }
 }
