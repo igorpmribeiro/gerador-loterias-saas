@@ -29,8 +29,12 @@ export async function GET(req: NextRequest) {
   for (const cfg of LOTTERY_LIST) {
     try {
       results.push(await seedLottery(cfg.id));
-    } catch {
-      results.push({ lottery: cfg.id, error: "falha ao sincronizar" });
+    } catch (err) {
+      console.error(`sync ${cfg.id} falhou:`, err);
+      results.push({
+        lottery: cfg.id,
+        error: err instanceof Error ? err.message : String(err),
+      });
     }
   }
   return NextResponse.json({ results });

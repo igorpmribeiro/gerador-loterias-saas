@@ -1,7 +1,11 @@
 import type { Draw, LotteryConfig, LotteryId } from "./lotteries";
 import { getLottery } from "./lotteries";
 
-const API_BASE = "https://servicebus2.caixa.gov.br/portaldeloterias/api";
+// A Caixa bloqueia IPs de datacenter (a Vercel recebe 403). Em produção
+// roteamos pelo proxy Cloudflare (CAIXA_PROXY_URL); sem ele, vai direto.
+const CAIXA_DIRECT = "https://servicebus2.caixa.gov.br/portaldeloterias/api";
+const API_BASE =
+  process.env.CAIXA_PROXY_URL?.replace(/\/+$/, "") || CAIXA_DIRECT;
 
 interface CaixaRateio {
   descricaoFaixa?: string;
@@ -38,8 +42,15 @@ async function fetchJson(url: string, retries = 3): Promise<CaixaResponse> {
     try {
       const res = await fetch(url, {
         headers: {
-          "User-Agent": "Mozilla/5.0",
-          Accept: "application/json",
+          "User-Agent":
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+          Accept: "application/json, text/plain, */*",
+          "Accept-Language": "pt-BR,pt;q=0.9",
+          Referer: "https://loterias.caixa.gov.br/",
+          // Autentica no proxy Cloudflare (ignorado quando vai direto à Caixa).
+          ...(process.env.CAIXA_PROXY_KEY
+            ? { "x-proxy-key": process.env.CAIXA_PROXY_KEY }
+            : {}),
         },
         signal: AbortSignal.timeout(25_000),
       });

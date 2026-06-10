@@ -17,6 +17,13 @@ if (process.env.NODE_ENV === "production" && !process.env.BETTER_AUTH_SECRET) {
 export const auth = betterAuth({
   appName: "Dezena",
   baseURL: process.env.BETTER_AUTH_URL,
+  // Requisições do navegador (com cookie) passam pelo check de origem do
+  // Better Auth. Sem origens confiáveis, até a requisição legítima recebe
+  // 403 "Invalid origin". Fixamos os domínios de produção (apex + www).
+  trustedOrigins: [
+    "https://www.dezena.app.br",
+    "https://dezena.app.br",
+  ],
   database: {
     dialect: new LibsqlDialect(
       dbAuthToken ? { url: dbUrl, authToken: dbAuthToken } : { url: dbUrl }
