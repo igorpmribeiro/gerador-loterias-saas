@@ -81,7 +81,7 @@ function NavLink({
       />
       {item.label}
       {active && (
-        <span className="ml-auto size-1.5 rounded-full bg-brand" />
+        <span className="ml-auto size-1.5 rounded-full bg-primary-foreground/70" />
       )}
     </Link>
   );

@@ -3,8 +3,10 @@
 import Link from "next/link";
 
 const SECTIONS = [
+  { id: "como-funciona", label: "Como funciona" },
   { id: "recursos", label: "Recursos" },
   { id: "planos", label: "Planos" },
+  { id: "faq", label: "FAQ" },
 ];
 
 /**
@@ -25,7 +27,7 @@ export function LandingNav() {
   }
 
   return (
-    <nav className="hidden items-center gap-7 text-sm text-muted-foreground md:flex">
+    <nav className="hidden items-center gap-5 text-sm text-muted-foreground md:flex lg:gap-7">
       {SECTIONS.map((s) => (
         <a
           key={s.id}

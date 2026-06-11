@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Script from "next/script";
 import { Fraunces, Hanken_Grotesk, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
 
@@ -27,7 +26,11 @@ const mono = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Dezena — Análise & Geração para Mega-Sena e Lotofácil",
+  metadataBase: new URL("https://www.dezena.app.br"),
+  title: {
+    default: "Dezena — Análise & Geração para Mega-Sena e Lotofácil",
+    template: "%s · Dezena",
+  },
   description:
     "Faça sua própria sorte com dados. Análise estatística e geração de jogos para Mega-Sena e Lotofácil.",
 };
@@ -40,13 +43,11 @@ export default function RootLayout({
   return (
     <html
       lang="pt-BR"
-      className={`${sans.variable} ${display.variable} ${mono.variable} h-full`}
-      suppressHydrationWarning
+      // `dark` fixo: tema único navy — ativa as variantes `dark:` dos
+      // componentes (cores afinadas para fundo escuro), sem toggle.
+      className={`${sans.variable} ${display.variable} ${mono.variable} dark h-full`}
     >
-      <body className="min-h-full">
-        <Script src="/theme-init.js" strategy="beforeInteractive" />
-        {children}
-      </body>
+      <body className="min-h-full">{children}</body>
     </html>
   );
 }

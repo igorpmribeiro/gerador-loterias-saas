@@ -44,3 +44,6 @@ next-env.d.ts
 /data
 /.playwright-mcp
 *.png
+# ...exceto os assets de marca versionados (logos, OG, favicons)
+!public/*.png
+!src/app/*.png

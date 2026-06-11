@@ -5,7 +5,6 @@ import { usePathname } from "next/navigation";
 import { Menu, RefreshCw, Check, ExternalLink } from "lucide-react";
 import { LOTTERY_LIST } from "@/lib/lotteries";
 import { useLottery } from "./lottery-context";
-import { ThemeToggle } from "./theme-toggle";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -77,7 +76,6 @@ export function Topbar({ onMenu }: { onMenu: () => void }) {
       )}
 
       <div className="ml-auto flex items-center gap-1.5 sm:gap-2">
-        <ThemeToggle />
         <Button
           variant="ghost"
           size="sm"
