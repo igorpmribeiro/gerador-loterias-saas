@@ -33,6 +33,9 @@ export const metadata: Metadata = {
   },
   description:
     "Faça sua própria sorte com dados. Análise estatística e geração de jogos para Mega-Sena e Lotofácil.",
+  verification: {
+    google: "7rk8hAXc5gW3BhogtoqRDCiE9Z91XrS16neU1YxlawY",
+  },
 };
 
 export default function RootLayout({
