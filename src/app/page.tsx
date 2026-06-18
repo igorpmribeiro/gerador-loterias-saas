@@ -28,11 +28,10 @@ import {
 
 export const metadata: Metadata = {
   title: {
-    absolute:
-      "Dezena — Análise estatística e geração de jogos para Mega-Sena e Lotofácil",
+    absolute: "Análise e gerador de jogos: Mega-Sena e Lotofácil · Dezena",
   },
   description:
-    "Todos os concursos da Mega-Sena e da Lotofácil destrinchados em 12 análises estatísticas. Geração de jogos com machine learning, fechamentos com garantia e conferência automática. Dados oficiais da Caixa, análises grátis e sem cadastro.",
+    "Análises estatísticas da Mega-Sena e Lotofácil e gerador de jogos com machine learning. Dados oficiais da Caixa — grátis e sem cadastro.",
   alternates: { canonical: "/" },
   openGraph: {
     type: "website",
@@ -136,11 +135,26 @@ function JsonLd() {
   const data = [
     {
       "@context": "https://schema.org",
+      "@type": "Organization",
+      name: "Dezena",
+      url: "https://www.dezena.app.br",
+      logo: "https://www.dezena.app.br/logo-desktop.png",
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      name: "Dezena",
+      url: "https://www.dezena.app.br",
+      inLanguage: "pt-BR",
+    },
+    {
+      "@context": "https://schema.org",
       "@type": "WebApplication",
       name: "Dezena",
       url: "https://www.dezena.app.br",
       applicationCategory: "UtilitiesApplication",
       operatingSystem: "Web",
+      inLanguage: "pt-BR",
       description:
         "Análise estatística e geração de jogos com machine learning para Mega-Sena e Lotofácil, com dados oficiais da Caixa.",
       offers: [
@@ -262,6 +276,9 @@ function Hero() {
           >
             A loteria é sorte.{" "}
             <em className="text-brand-strong">O seu jogo é método.</em>
+            <span className="mt-4 block text-base font-normal leading-snug tracking-normal text-muted-foreground sm:text-lg">
+              Análise estatística e gerador de jogos para Mega-Sena e Lotofácil.
+            </span>
           </h1>
 
           <p
