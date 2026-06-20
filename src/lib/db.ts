@@ -318,3 +318,18 @@ export async function getPrize(
   );
   return row ? { ...row, lottery: row.lottery as LotteryId } : null;
 }
+
+/** Todas as faixas de premiação de um concurso, da principal para a menor. */
+export async function getPrizes(
+  lottery: LotteryId,
+  contest: number
+): Promise<PrizeRow[]> {
+  const rows = await all<PrizeRow>(
+    `SELECT lottery, contest, hits, label, winners, amount
+       FROM draw_prizes
+      WHERE lottery = ? AND contest = ?
+      ORDER BY hits DESC`,
+    [lottery, contest]
+  );
+  return rows.map((r) => ({ ...r, lottery: r.lottery as LotteryId }));
+}

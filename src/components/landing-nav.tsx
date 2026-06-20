@@ -38,6 +38,12 @@ export function LandingNav() {
           {s.label}
         </a>
       ))}
+      <Link
+        href="/resultados"
+        className="transition-colors hover:text-foreground"
+      >
+        Resultados
+      </Link>
       <Link href="/analise" className="transition-colors hover:text-foreground">
         Análises
       </Link>

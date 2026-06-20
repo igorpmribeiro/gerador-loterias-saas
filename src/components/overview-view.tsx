@@ -12,6 +12,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { LOTTERIES, type LotteryId } from "@/lib/lotteries";
+import { brl, formatDate } from "@/lib/format";
 import { useLottery } from "./lottery-context";
 import { useApiResource } from "@/hooks/use-api-resource";
 import { Ball } from "./ball";
@@ -52,21 +53,6 @@ interface OverviewFail {
 }
 
 type OverviewItem = OverviewOk | OverviewFail;
-
-function brl(value: number, compact = false): string {
-  return value.toLocaleString("pt-BR", {
-    style: "currency",
-    currency: "BRL",
-    notation: compact ? "compact" : "standard",
-    maximumFractionDigits: compact ? 1 : 2,
-  });
-}
-
-function formatDate(iso: string | null): string {
-  if (!iso) return "—";
-  const m = iso.match(/^(\d{4})-(\d{2})-(\d{2})$/);
-  return m ? `${m[3]}/${m[2]}/${m[1]}` : iso;
-}
 
 function LotteryPanel({ data }: { data: OverviewItem }) {
   const tone = LOTTERIES[data.lottery].colorVar;

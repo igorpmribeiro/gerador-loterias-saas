@@ -9,6 +9,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const fresh = new Date();
   return [
     { url: `${BASE}/`, changeFrequency: "weekly", priority: 1 },
+    { url: `${BASE}/resultados`, lastModified: fresh, changeFrequency: "daily", priority: 0.9 },
+    { url: `${BASE}/resultados/mega-sena`, lastModified: fresh, changeFrequency: "daily", priority: 0.9 },
+    { url: `${BASE}/resultados/lotofacil`, lastModified: fresh, changeFrequency: "daily", priority: 0.9 },
     { url: `${BASE}/analise`, lastModified: fresh, changeFrequency: "daily", priority: 0.9 },
     { url: `${BASE}/tabela`, lastModified: fresh, changeFrequency: "daily", priority: 0.8 },
     { url: `${BASE}/register`, changeFrequency: "monthly", priority: 0.5 },

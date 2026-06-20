@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { Menu, RefreshCw, Check, ExternalLink } from "lucide-react";
 import { LOTTERY_LIST } from "@/lib/lotteries";
@@ -17,6 +17,19 @@ const LOTTERY_AWARE_PREFIXES = [
   "/historico",
 ];
 
+// O refresh manual é limitado a 1x/dia: a sincronização com a Caixa já roda no
+// servidor via cron todo dia às 3h, então clicar repetido só geraria carga
+// desnecessária no proxy da Caixa sem trazer dados novos. Guardamos a data do
+// último uso (YYYY-MM-DD, horário local) no localStorage.
+const REFRESH_KEY = "loterias-ia:last-refresh";
+
+function todayKey(): string {
+  const d = new Date();
+  const mm = String(d.getMonth() + 1).padStart(2, "0");
+  const dd = String(d.getDate()).padStart(2, "0");
+  return `${d.getFullYear()}-${mm}-${dd}`;
+}
+
 export function Topbar({ onMenu }: { onMenu: () => void }) {
   const { lottery, setLottery, bumpDataVersion } = useLottery();
   const pathname = usePathname();
@@ -24,11 +37,21 @@ export function Topbar({ onMenu }: { onMenu: () => void }) {
     pathname.startsWith(p)
   );
   const [synced, setSynced] = useState(false);
+  // Já atualizou hoje? Botão fica visível, porém desabilitado até amanhã.
+  const [usedToday, setUsedToday] = useState(false);
 
-  // A sincronização com a Caixa roda no servidor via cron (/api/sync).
-  // Aqui apenas recarregamos os dados já armazenados.
+  /* eslint-disable react-hooks/set-state-in-effect */
+  useEffect(() => {
+    setUsedToday(localStorage.getItem(REFRESH_KEY) === todayKey());
+  }, []);
+  /* eslint-enable react-hooks/set-state-in-effect */
+
+  // Recarrega os dados já armazenados e marca o uso do dia.
   function refresh() {
+    if (usedToday) return;
     bumpDataVersion();
+    localStorage.setItem(REFRESH_KEY, todayKey());
+    setUsedToday(true);
     setSynced(true);
     setTimeout(() => setSynced(false), 2500);
   }
@@ -80,11 +103,30 @@ export function Topbar({ onMenu }: { onMenu: () => void }) {
           variant="ghost"
           size="sm"
           onClick={refresh}
-          className="text-muted-foreground"
+          disabled={usedToday}
+          title={
+            usedToday
+              ? "Os resultados são sincronizados automaticamente todo dia às 3h. Novo refresh manual liberado amanhã."
+              : "Recarregar os resultados mais recentes"
+          }
+          aria-label={
+            usedToday ? "Já atualizado hoje" : "Atualizar resultados"
+          }
+          // O disabled padrão do Button usa pointer-events-none (some o cursor);
+          // reabilitamos só para exibir o cursor de "proibido" no estado travado.
+          className="text-muted-foreground disabled:pointer-events-auto disabled:cursor-not-allowed"
         >
-          {synced ? <Check className="text-success" /> : <RefreshCw />}
+          {synced || usedToday ? (
+            <Check className="text-success" />
+          ) : (
+            <RefreshCw />
+          )}
           <span className="hidden sm:inline">
-            {synced ? "Atualizado" : "Atualizar"}
+            {synced
+              ? "Atualizado"
+              : usedToday
+                ? "Atualizado hoje"
+                : "Atualizar"}
           </span>
         </Button>
 
