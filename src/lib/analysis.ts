@@ -92,18 +92,18 @@ export function countPrimes(nums: number[]): number {
   return nums.filter((n) => isPrime(n)).length;
 }
 
-function mean(xs: number[]): number {
+export function mean(xs: number[]): number {
   if (xs.length === 0) return 0;
   return xs.reduce((a, b) => a + b, 0) / xs.length;
 }
 
-function stdev(xs: number[]): number {
+export function stdev(xs: number[]): number {
   if (xs.length === 0) return 0;
   const m = mean(xs);
   return Math.sqrt(mean(xs.map((x) => (x - m) ** 2)));
 }
 
-function toBuckets(
+export function toBuckets(
   counts: Map<number, number>,
   total: number,
   label: (v: number) => string

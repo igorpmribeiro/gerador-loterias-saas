@@ -19,6 +19,8 @@ interface CaixaResponse {
   dataApuracao: string;
   listaDezenas: string[];
   acumulado?: boolean;
+  /** 2 = concurso especial (Mega da Virada / Lotofácil da Independência). */
+  indicadorConcursoEspecial?: number;
   dataProximoConcurso?: string;
   numeroConcursoProximo?: number;
   valorEstimadoProximoConcurso?: number;
@@ -110,13 +112,28 @@ function toPrizes(cfg: LotteryConfig, raw: CaixaResponse): DrawPrize[] {
 export interface DrawWithPrizes {
   draw: Draw;
   prizes: DrawPrize[];
+  /**
+   * Concurso especial segundo a Caixa. Só é confiável nos concursos mais
+   * recentes — o histórico antigo continua vindo como comum, por isso o
+   * catálogo de `special-draws.ts` cuida das edições passadas.
+   */
+  special: boolean;
 }
 
-/** Busca o concurso mais recente de uma loteria. */
-export async function fetchLatest(lottery: LotteryId): Promise<Draw> {
+/**
+ * Busca o concurso mais recente de uma loteria, com premiação e a marca de
+ * concurso especial — o endpoint já devolve tudo numa requisição só.
+ */
+export async function fetchLatestWithPrizes(
+  lottery: LotteryId
+): Promise<DrawWithPrizes> {
   const cfg = getLottery(lottery);
   const raw = await fetchJson(`${API_BASE}/${cfg.apiPath}`);
-  return toDraw(cfg, raw);
+  return {
+    draw: toDraw(cfg, raw),
+    prizes: toPrizes(cfg, raw),
+    special: raw.indicadorConcursoEspecial === 2,
+  };
 }
 
 export interface PrizeTier {
@@ -194,7 +211,11 @@ export async function fetchContestWithPrizes(
 ): Promise<DrawWithPrizes> {
   const cfg = getLottery(lottery);
   const raw = await fetchJson(`${API_BASE}/${cfg.apiPath}/${contest}`);
-  return { draw: toDraw(cfg, raw), prizes: toPrizes(cfg, raw) };
+  return {
+    draw: toDraw(cfg, raw),
+    prizes: toPrizes(cfg, raw),
+    special: raw.indicadorConcursoEspecial === 2,
+  };
 }
 
 /** Executa tarefas com limite de concorrência. */

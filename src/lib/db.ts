@@ -38,6 +38,15 @@ const SCHEMA: string[] = [
    )`,
   `CREATE INDEX IF NOT EXISTS idx_draw_prizes_lookup
      ON draw_prizes(lottery, contest, hits)`,
+  // Concursos que a Caixa marcou como especiais (Mega da Virada, Lotofácil
+  // da Independência). Só guarda o que a sincronização descobre — o histórico
+  // conferido fica no catálogo de src/lib/special-draws.ts.
+  `CREATE TABLE IF NOT EXISTS special_draws (
+     lottery TEXT NOT NULL,
+     contest INTEGER NOT NULL,
+     date    TEXT NOT NULL,
+     PRIMARY KEY (lottery, contest)
+   )`,
   `CREATE TABLE IF NOT EXISTS saved_games (
      id              TEXT PRIMARY KEY,
      user_id         TEXT NOT NULL,
@@ -317,6 +326,40 @@ export async function getPrize(
     [lottery, contest, hits]
   );
   return row ? { ...row, lottery: row.lottery as LotteryId } : null;
+}
+
+/* ----------------------- Sorteios especiais ----------------------- */
+
+export interface SpecialDrawRow {
+  contest: number;
+  date: string;
+}
+
+/** Registra concursos marcados como especiais pela Caixa (idempotente). */
+export async function markSpecialDraws(
+  lottery: LotteryId,
+  rows: SpecialDrawRow[]
+): Promise<void> {
+  if (rows.length === 0) return;
+  await batch(
+    rows.map((r) => ({
+      sql: `INSERT INTO special_draws (lottery, contest, date)
+            VALUES (?, ?, ?)
+            ON CONFLICT(lottery, contest) DO UPDATE SET date = excluded.date`,
+      args: [lottery, r.contest, r.date],
+    }))
+  );
+}
+
+/** Concursos especiais descobertos na sincronização, do mais antigo ao novo. */
+export async function getSpecialDraws(
+  lottery: LotteryId
+): Promise<SpecialDrawRow[]> {
+  return all<SpecialDrawRow>(
+    `SELECT contest, date FROM special_draws
+      WHERE lottery = ? ORDER BY contest`,
+    [lottery]
+  );
 }
 
 /** Todas as faixas de premiação de um concurso, da principal para a menor. */

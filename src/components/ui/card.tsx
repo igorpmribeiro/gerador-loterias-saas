@@ -24,9 +24,18 @@ function CardHeader({ className, ...props }: React.ComponentProps<"div">) {
   );
 }
 
-function CardTitle({ className, ...props }: React.ComponentProps<"div">) {
+/**
+ * `as` permite que o título do card seja um heading real (h2/h3) sem mudar a
+ * aparência. Em páginas indexáveis o texto do card é o que carrega a intenção
+ * de busca — como `div`, ele não existia para o crawler.
+ */
+function CardTitle({
+  className,
+  as: Comp = "div",
+  ...props
+}: React.ComponentProps<"div"> & { as?: "div" | "h2" | "h3" }) {
   return (
-    <div
+    <Comp
       data-slot="card-title"
       className={cn("text-base font-semibold leading-none", className)}
       {...props}

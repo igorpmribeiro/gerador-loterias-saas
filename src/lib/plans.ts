@@ -55,7 +55,7 @@ export const PLAN_FEATURES: PlanFeature[] = [
     free: `até ${FREE_LIMITS.savedGames}`,
     premium: "ilimitados",
   },
-  { label: "Fechamentos (wheeling)", free: false, premium: true },
+  { label: "Fechamentos (desdobramentos)", free: false, premium: true },
   {
     label: "Avaliador automático e acompanhamento de prêmios",
     free: false,

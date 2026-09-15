@@ -47,3 +47,6 @@ next-env.d.ts
 # ...exceto os assets de marca versionados (logos, OG, favicons)
 !public/*.png
 !src/app/*.png
+
+# artefatos de skills locais
+/.impeccable

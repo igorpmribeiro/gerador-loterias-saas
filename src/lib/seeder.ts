@@ -1,18 +1,37 @@
 import {
   fetchContestsWithPrizes,
-  fetchLatest,
+  fetchLatestWithPrizes,
   fetchRangeWithPrizes,
+  type DrawWithPrizes,
 } from "./caixa";
 import {
   countDraws,
   getLatestContest,
   getMissingContests,
+  markSpecialDraws,
   setMeta,
   upsertDrawPrizes,
   upsertDraws,
 } from "./db";
 import type { LotteryId } from "./lotteries";
 import { evaluateAllPending } from "./saved-games";
+import { isPlausibleSpecialDate } from "./special-draws";
+
+/**
+ * Guarda as edições especiais que a Caixa marcou (Mega da Virada / Lotofácil
+ * da Independência), para que a próxima edição apareça na análise sem
+ * depender de um deploy. A janela de meses é só uma trava contra marcação
+ * fora de época — quem decide é o indicador da Caixa.
+ */
+async function recordSpecials(
+  lottery: LotteryId,
+  items: DrawWithPrizes[]
+): Promise<void> {
+  const rows = items
+    .filter((i) => i.special && isPlausibleSpecialDate(lottery, i.draw.date))
+    .map((i) => ({ contest: i.draw.contest, date: i.draw.date }));
+  await markSpecialDraws(lottery, rows);
+}
 
 export interface SeedResult {
   lottery: LotteryId;
@@ -31,7 +50,8 @@ export async function seedLottery(
   maxContests?: number,
   onProgress?: (done: number, total: number) => void
 ): Promise<SeedResult> {
-  const latest = await fetchLatest(lottery);
+  const latestItem = await fetchLatestWithPrizes(lottery);
+  const latest = latestItem.draw;
   const stored = await getLatestContest(lottery);
 
   const fullStart = maxContests
@@ -46,9 +66,13 @@ export async function seedLottery(
     const items = await fetchRangeWithPrizes(lottery, from, to, onProgress);
     inserted += await upsertDraws(items.map((i) => i.draw));
     await upsertDrawPrizes(items.flatMap((i) => i.prizes));
+    await recordSpecials(lottery, items);
   }
-  // Garante que o último concurso esteja salvo.
+  // Garante que o último concurso esteja salvo — com premiação e marca de
+  // especial, caso a busca por intervalo acima tenha falhado justamente nele.
   await upsertDraws([latest]);
+  await upsertDrawPrizes(latestItem.prizes);
+  await recordSpecials(lottery, [latestItem]);
 
   // Tenta preencher lacunas (concursos que falharam em buscas anteriores).
   const missing = (await getMissingContests(lottery, latest.contest)).filter(
@@ -62,6 +86,7 @@ export async function seedLottery(
     );
     inserted += await upsertDraws(recovered.map((i) => i.draw));
     await upsertDrawPrizes(recovered.flatMap((i) => i.prizes));
+    await recordSpecials(lottery, recovered);
   }
 
   await setMeta(`lastSync:${lottery}`, new Date().toISOString());

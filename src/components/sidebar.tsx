@@ -1,5 +1,6 @@
 "use client";
 
+import { useCallback } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
@@ -7,6 +8,7 @@ import {
   ChartColumnBig,
   Table2,
   Dices,
+  Sparkles,
   ClipboardCheck,
   History,
   CreditCard,
@@ -21,6 +23,7 @@ import {
 import { Brand } from "./brand";
 import { cn } from "@/lib/utils";
 import { signOut, useSession } from "@/lib/auth-client";
+import { useDialogBehavior } from "@/hooks/use-dialog-behavior";
 
 interface NavItem {
   href: string;
@@ -32,6 +35,7 @@ const MAIN_NAV: NavItem[] = [
   { href: "/painel", label: "Início", icon: House },
   { href: "/analise", label: "Análise", icon: ChartColumnBig },
   { href: "/tabela", label: "Tabela", icon: Table2 },
+  { href: "/especiais", label: "Especiais", icon: Sparkles },
   { href: "/gerador", label: "Gerador", icon: Dices },
   { href: "/avaliador", label: "Avaliador", icon: ClipboardCheck },
   { href: "/historico", label: "Histórico", icon: History },
@@ -66,7 +70,7 @@ function NavLink({
       onClick={onNavigate}
       aria-current={active ? "page" : undefined}
       className={cn(
-        "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors",
+        "flex min-h-11 items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors lg:min-h-0",
         active
           ? "bg-primary text-primary-foreground shadow-sm"
           : "text-muted-foreground hover:bg-secondary hover:text-foreground"
@@ -145,11 +149,11 @@ function SidebarContent({ onNavigate }: { onNavigate: () => void }) {
               type="button"
               disabled
               title="Disponível em breve"
-              className="flex cursor-not-allowed items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-muted-foreground/55"
+              className="flex min-h-11 cursor-not-allowed items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-muted-foreground/70 lg:min-h-0"
             >
               <Icon className="size-[18px] shrink-0" strokeWidth={2} />
               {item.label}
-              <span className="ml-auto rounded-sm border px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground/70">
+              <span className="ml-auto rounded-sm border px-1.5 py-0.5 text-[11px] font-medium text-muted-foreground">
                 em breve
               </span>
             </button>
@@ -244,6 +248,11 @@ export function Sidebar({
   mobileOpen: boolean;
   onClose: () => void;
 }) {
+  const close = useCallback(() => onClose(), [onClose]);
+  // Escape, foco preso no painel e scroll travado: sem isso o drawer parecia
+  // fechado para o teclado e o leitor de tela continuava lendo o fundo.
+  const panelRef = useDialogBehavior<HTMLElement>(mobileOpen, close);
+
   return (
     <>
       {/* Desktop */}
@@ -261,14 +270,21 @@ export function Sidebar({
             onClick={onClose}
             aria-hidden
           />
-          <aside className="absolute left-0 top-0 h-full w-72 border-r bg-card shadow-xl">
+          <aside
+            ref={panelRef}
+            role="dialog"
+            aria-modal="true"
+            aria-label="Menu de navegação"
+            tabIndex={-1}
+            className="absolute left-0 top-0 h-full w-72 overflow-y-auto border-r bg-card shadow-xl outline-none"
+          >
             <button
               type="button"
               onClick={onClose}
               aria-label="Fechar menu"
-              className="absolute right-3 top-3 flex size-8 items-center justify-center rounded-md text-muted-foreground hover:bg-secondary"
+              className="absolute right-2 top-2 flex size-11 items-center justify-center rounded-md text-muted-foreground hover:bg-secondary"
             >
-              <X className="size-4" />
+              <X className="size-5" />
             </button>
             <SidebarContent onNavigate={onClose} />
           </aside>

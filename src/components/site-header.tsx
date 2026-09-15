@@ -2,6 +2,14 @@ import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
+const MOBILE_LINKS = [
+  { href: "/resultados", label: "Resultados" },
+  { href: "/analise", label: "Análises" },
+  { href: "/especiais", label: "Especiais" },
+  { href: "/tabela", label: "Tabela" },
+  { href: "/#planos", label: "Planos" },
+];
+
 /**
  * Cabeçalho enxuto para páginas públicas de conteúdo/SEO (ex.: /resultados),
  * onde não existem as seções da landing. Logo + links reais (não âncoras) +
@@ -50,6 +58,12 @@ export function SiteHeader() {
             Análises
           </Link>
           <Link
+            href="/especiais"
+            className="transition-colors hover:text-foreground"
+          >
+            Especiais
+          </Link>
+          <Link
             href="/tabela"
             className="transition-colors hover:text-foreground"
           >
@@ -58,14 +72,37 @@ export function SiteHeader() {
         </nav>
 
         <div className="flex items-center gap-1.5 sm:gap-2">
-          <Button variant="ghost" size="sm" asChild>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="hidden sm:inline-flex"
+            asChild
+          >
             <Link href="/login">Entrar</Link>
           </Button>
-          <Button size="sm" asChild>
+          <Button size="sm" className="h-11 sm:h-8" asChild>
             <Link href="/register">Criar conta grátis</Link>
           </Button>
         </div>
       </div>
+
+      {/* No celular os links viram uma faixa própria: sem isso estas páginas
+          ficavam sem nenhuma navegação abaixo de `md`. */}
+      <nav
+        aria-label="Seções do site"
+        className="flex items-center gap-1 overflow-x-auto px-2 pb-1 text-sm md:hidden"
+      >
+        {MOBILE_LINKS.map((l) => (
+          <Link
+            key={l.href}
+            href={l.href}
+            className="flex min-h-11 shrink-0 items-center rounded-md px-3 text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
+          >
+            {l.label}
+          </Link>
+        ))}
+      </nav>
+
       <div aria-hidden className="hairline-brand opacity-70" />
     </header>
   );

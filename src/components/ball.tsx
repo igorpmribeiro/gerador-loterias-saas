@@ -10,11 +10,16 @@ const sizeClasses: Record<BallSize, string> = {
   lg: "size-11 text-base",
 };
 
+/**
+ * `hot` e `cold` são os extremos da rampa de calor de `src/lib/heat.ts`, não
+ * cores avulsas: a mesma escala que colore o mapa de calor colore os
+ * rankings, e o contraste do texto vem calculado junto.
+ */
 const toneClasses: Record<BallTone, string> = {
   mega: "bg-mega text-mega-foreground",
   lotofacil: "bg-lotofacil text-lotofacil-foreground",
-  hot: "bg-rose-500 text-white",
-  cold: "bg-sky-500 text-white",
+  hot: "bg-heat-hot text-heat-hot-foreground",
+  cold: "bg-heat-cold text-heat-cold-foreground",
   neutral: "bg-secondary text-secondary-foreground",
   muted: "bg-muted text-muted-foreground",
 };

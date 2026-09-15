@@ -28,7 +28,7 @@ function CyclePanel({ cycle }: { cycle: CycleSummary }) {
       <CardHeader>
         <div className="flex items-center gap-2">
           <RotateCw className="size-4 text-lotofacil" />
-          <CardTitle>Ciclo atual da Lotofácil</CardTitle>
+          <CardTitle as="h2">Ciclo atual da Lotofácil</CardTitle>
         </div>
         <CardDescription>
           Um ciclo fecha quando todas as 25 dezenas são sorteadas. As dezenas
@@ -127,9 +127,26 @@ interface TablePayload {
   cycle: CycleSummary | null;
 }
 
-export function TableView({ cfg }: { cfg: LotteryConfig }) {
+export const TABLE_LIMIT = 20;
+
+/** URL da API da tabela — compartilhada com o SSR para casar a semente. */
+export function tableApiUrl(lottery: string): string {
+  return `/api/table?lottery=${lottery}&limit=${TABLE_LIMIT}`;
+}
+
+export function TableView({
+  cfg,
+  initialData,
+}: {
+  cfg: LotteryConfig;
+  /** Tabela já calculada no servidor para esta loteria (evita o spinner). */
+  initialData?: TablePayload | null;
+}) {
+  const url = tableApiUrl(cfg.id);
   const { data, loading, error, reload } = useApiResource<TablePayload>(
-    `/api/table?lottery=${cfg.id}&limit=20`
+    url,
+    0,
+    initialData ? { url, data: initialData } : undefined
   );
 
   const tone = cfg.colorVar;
@@ -168,7 +185,7 @@ export function TableView({ cfg }: { cfg: LotteryConfig }) {
         <CardHeader>
           <div className="flex flex-wrap items-center justify-between gap-2">
             <div>
-              <CardTitle>Últimos 20 concursos — {cfg.name}</CardTitle>
+              <CardTitle as="h2">Últimos 20 concursos — {cfg.name}</CardTitle>
               <CardDescription>
                 Tabela analítica concurso a concurso
               </CardDescription>

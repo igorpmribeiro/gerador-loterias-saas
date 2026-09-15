@@ -50,6 +50,14 @@
   --lotofacil: oklch(0.67 0.16 312);
   --lotofacil-foreground: oklch(0.15 0.03 312);
 
+  /* Extremos da rampa de calor (src/lib/heat.ts), tokenizados para que as
+     bolinhas "quente"/"frio" usem a MESMA escala do mapa de calor — antes
+     eram rose-500/sky-500 crus, que reprovavam em contraste (3,8:1 e 2,7:1). */
+  --heat-hot: oklch(0.42 0.24 20);
+  --heat-hot-foreground: oklch(0.985 0.003 247);
+  --heat-cold: oklch(0.92 0.04 250);
+  --heat-cold-foreground: oklch(0.22 0.015 255);
+
   /* Paleta da logo: navy profundo + verde/teal/azul/violeta. */
   --dz-navy: oklch(0.155 0.06 268);
   --dz-green: oklch(0.74 0.155 163);
@@ -87,6 +95,10 @@
   --color-chart-3: var(--chart-3);
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
+  --color-heat-hot: var(--heat-hot);
+  --color-heat-hot-foreground: var(--heat-hot-foreground);
+  --color-heat-cold: var(--heat-cold);
+  --color-heat-cold-foreground: var(--heat-cold-foreground);
   --color-mega: var(--mega);
   --color-mega-foreground: var(--mega-foreground);
   --color-lotofacil: var(--lotofacil);

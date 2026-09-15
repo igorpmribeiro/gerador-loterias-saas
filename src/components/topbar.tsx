@@ -12,6 +12,7 @@ import { cn } from "@/lib/utils";
 const LOTTERY_AWARE_PREFIXES = [
   "/analise",
   "/tabela",
+  "/especiais",
   "/gerador",
   "/avaliador",
   "/historico",
@@ -62,7 +63,7 @@ export function Topbar({ onMenu }: { onMenu: () => void }) {
         type="button"
         onClick={onMenu}
         aria-label="Abrir menu"
-        className="flex size-9 items-center justify-center rounded-md text-muted-foreground hover:bg-secondary lg:hidden"
+        className="flex size-11 items-center justify-center rounded-md text-muted-foreground hover:bg-secondary lg:hidden"
       >
         <Menu className="size-5" />
       </button>
@@ -83,7 +84,7 @@ export function Topbar({ onMenu }: { onMenu: () => void }) {
                 aria-selected={active}
                 onClick={() => setLottery(l.id)}
                 className={cn(
-                  "rounded-md px-2.5 py-1.5 text-sm font-medium transition-colors sm:px-3.5",
+                  "min-h-11 rounded-md px-3 py-1.5 text-sm font-medium transition-colors sm:min-h-0 sm:px-3.5",
                   active
                     ? l.id === "megasena"
                       ? "bg-mega text-mega-foreground"
@@ -114,7 +115,7 @@ export function Topbar({ onMenu }: { onMenu: () => void }) {
           }
           // O disabled padrão do Button usa pointer-events-none (some o cursor);
           // reabilitamos só para exibir o cursor de "proibido" no estado travado.
-          className="text-muted-foreground disabled:pointer-events-auto disabled:cursor-not-allowed"
+          className="h-11 text-muted-foreground disabled:pointer-events-auto disabled:cursor-not-allowed sm:h-8"
         >
           {synced || usedToday ? (
             <Check className="text-success" />
@@ -130,7 +131,7 @@ export function Topbar({ onMenu }: { onMenu: () => void }) {
           </span>
         </Button>
 
-        <Button asChild size="sm" variant="outline">
+        <Button asChild size="sm" variant="outline" className="h-11 sm:h-8">
           <a
             href="https://loterias.caixa.gov.br/"
             target="_blank"

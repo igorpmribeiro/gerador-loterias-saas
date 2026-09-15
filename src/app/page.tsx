@@ -13,11 +13,14 @@ import {
   History,
   Layers,
   Minus,
+  ShieldCheck,
 } from "lucide-react";
 import { LandingNav } from "@/components/landing-nav";
+import { LandingCtaBar } from "@/components/landing-cta-bar";
 import { LandingFooter } from "@/components/landing-footer";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { COMPANY, REFUND_DAYS } from "@/lib/legal";
 import {
   FREE_LIMITS,
   LIFETIME_PRICE,
@@ -130,6 +133,10 @@ const FAQ = [
     q: "O Premium é assinatura?",
     a: `Não. É pagamento único de ${formatBRL(LIFETIME_PRICE.launch)} no lançamento (preço cheio: ${formatBRL(LIFETIME_PRICE.full)}) via Pix, boleto ou cartão pelo Mercado Pago. Pagou uma vez, é seu para sempre — sem mensalidade, sem renovação automática, sem surpresa na fatura.`,
   },
+  {
+    q: "E se eu me arrepender da compra?",
+    a: `Você tem ${REFUND_DAYS} dias corridos a partir do pagamento para desistir e receber 100% do valor de volta, sem precisar justificar o motivo. É o direito de arrependimento do artigo 49 do Código de Defesa do Consumidor. Basta escrever para ${COMPANY.supportEmail} usando o e-mail da sua conta: o estorno sai pelo mesmo meio do pagamento em até 10 dias e os seus jogos salvos continuam na conta.`,
+  },
 ];
 
 function JsonLd() {
@@ -199,7 +206,7 @@ export default function LandingPage() {
         Pular para o conteúdo
       </a>
       <LandingHeader />
-      <main id="conteudo" className="flex-1">
+      <main id="conteudo" className="flex-1 pb-20 md:pb-0">
         <Hero />
         <StatsBar />
         <HowItWorks />
@@ -207,11 +214,14 @@ export default function LandingPage() {
         <Features />
         <Lotteries />
         <Generator />
+        {/* O aviso de jogo responsável vem ANTES do preço: a honestidade vale
+            no momento da decisão, não como rodapé depois do fechamento. */}
+        <Disclaimer />
         <Pricing />
         <Faq />
         <FinalCta />
-        <Disclaimer />
       </main>
+      <LandingCtaBar />
       <LandingFooter />
     </div>
   );
@@ -221,7 +231,11 @@ function LandingHeader() {
   return (
     <header className="sticky top-0 z-30 bg-background/85 backdrop-blur-md">
       <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between gap-3 px-4 sm:px-6">
-        <Link href="/" className="inline-flex shrink-0 items-center" aria-label="Dezena — página inicial">
+        <Link
+          href="/"
+          className="inline-flex min-h-11 shrink-0 items-center"
+          aria-label="Dezena — página inicial"
+        >
           <Image
             src="/logo-desktop.png"
             alt="Dezena — análise e geração de jogos para loterias"
@@ -243,10 +257,12 @@ function LandingHeader() {
         </Link>
         <LandingNav />
         <div className="flex items-center gap-1.5 sm:gap-2">
-          <Button variant="ghost" size="sm" asChild>
+          {/* "Entrar" sai do header no celular: já está no menu, e o espaço
+              vale mais para a ação primária. */}
+          <Button variant="ghost" size="sm" className="hidden sm:inline-flex" asChild>
             <Link href="/login">Entrar</Link>
           </Button>
-          <Button size="sm" asChild>
+          <Button size="sm" className="h-11 sm:h-8" asChild>
             <Link href="/register">Criar conta grátis</Link>
           </Button>
         </div>
@@ -258,7 +274,7 @@ function LandingHeader() {
 
 function Hero() {
   return (
-    <section className="relative overflow-hidden border-b">
+    <section id="hero" className="relative overflow-hidden border-b">
       <div aria-hidden className="pointer-events-none absolute inset-0 bg-aurora" />
       <div
         aria-hidden
@@ -287,10 +303,8 @@ function Hero() {
             style={{ animationDelay: "120ms" }}
           >
             O Dezena destrincha <strong className="font-medium text-foreground">todos os concursos já sorteados</strong>{" "}
-            da Mega-Sena e da Lotofácil — frequência, atraso, somas, pares e
-            afinidades entre dezenas — e transforma essa leitura em jogos
-            gerados com machine learning, fechamentos com garantia e
-            conferência automática de resultados.
+            da Mega-Sena e da Lotofácil e transforma essa leitura em jogos
+            gerados com machine learning.
           </p>
 
           <div
@@ -512,7 +526,7 @@ function HowItWorks() {
               </p>
               <Link
                 href={s.cta.href}
-                className="group mt-4 inline-flex items-center gap-1.5 text-sm font-medium text-brand-strong hover:underline"
+                className="group mt-4 inline-flex min-h-11 items-center gap-1.5 text-sm font-medium text-brand-strong hover:underline sm:min-h-0"
               >
                 {s.cta.label}
                 <ArrowRight className="size-3.5 transition-transform group-hover:translate-x-0.5" />
@@ -543,9 +557,8 @@ function AnalysisShowcase() {
     <section className="border-b bg-card/40">
       <div className="scroll-reveal mx-auto grid w-full max-w-6xl grid-cols-1 items-center gap-12 px-4 py-16 sm:px-6 sm:py-24 lg:grid-cols-2">
         <div>
-          <p className="text-sm font-medium text-brand-strong">Análises abertas</p>
-          <h2 className="mt-2 text-3xl font-medium tracking-tight sm:text-4xl">
-            Você nunca mais olha um volante do mesmo jeito
+          <h2 className="text-3xl font-medium tracking-tight sm:text-4xl">
+            Veja quais números mais saem na Mega-Sena e na Lotofácil
           </h2>
           <p className="mt-4 text-muted-foreground">
             Cada concurso da história alimenta as análises. Em segundos, você
@@ -772,7 +785,7 @@ function Generator() {
     },
     {
       title: "Afinidade entre dezenas",
-      desc: "Uma matriz de coocorrência aprende quais pares costumam sair juntos — e usa isso na montagem do jogo.",
+      desc: "O modelo aprende quais pares de dezenas costumam sair juntos e leva isso em conta na montagem do jogo.",
     },
   ];
   const strategies = ["ML (recomendada)", "Quentes", "Atrasadas", "Equilibrada", "Aleatória"];
@@ -786,11 +799,11 @@ function Generator() {
               Como o modelo pensa antes de sugerir um jogo
             </h2>
             <p className="mt-4 text-muted-foreground">
-              Nada de caixa-preta: o gerador combina quatro sinais estatísticos,
-              refina cada jogo por <em>simulated annealing</em> e descarta
-              qualquer combinação que já tenha sido sorteada na história. Cada
-              jogo sai com uma nota de confiança de 5 a 99 — afinidade com os
-              padrões históricos, não promessa de prêmio.
+              Nada de caixa-preta: o gerador combina quatro sinais
+              estatísticos, testa milhares de variações até equilibrar o jogo e
+              descarta qualquer combinação que já tenha sido sorteada na
+              história. Cada jogo sai com uma nota de confiança de 5 a 99, que
+              mede a afinidade com os padrões históricos e não promete prêmio.
             </p>
             <div className="mt-6">
               <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
@@ -812,7 +825,7 @@ function Generator() {
             </div>
             <Link
               href="/register"
-              className="group mt-7 inline-flex items-center gap-1.5 text-sm font-medium text-brand-strong hover:underline"
+              className="group mt-7 inline-flex min-h-11 items-center gap-1.5 text-sm font-medium text-brand-strong hover:underline sm:min-h-0"
             >
               Gerar meus primeiros jogos grátis
               <ArrowRight className="size-3.5 transition-transform group-hover:translate-x-0.5" />
@@ -859,12 +872,12 @@ function PlanFeatureList({
           <li key={f.label} className="flex items-start gap-2.5 text-sm">
             <span className="mt-0.5 shrink-0">
               {off ? (
-                <Minus aria-hidden className="size-4 text-muted-foreground/40" />
+                <Minus aria-hidden className="size-4 text-muted-foreground/70" />
               ) : (
                 <Check aria-hidden className="size-4 text-brand-strong" strokeWidth={2.5} />
               )}
             </span>
-            <span className={off ? "text-muted-foreground/55" : ""}>
+            <span className={off ? "text-muted-foreground/70" : ""}>
               {off && <span className="sr-only">não incluso: </span>}
               {f.label}
               {qualifier && (
@@ -913,7 +926,7 @@ function Pricing() {
             <div className="mt-8 flex-1">
               <PlanFeatureList features={PLAN_FEATURES} side="free" />
             </div>
-            <Button variant="outline" className="mt-8 w-full" asChild>
+            <Button size="lg" variant="outline" className="mt-8 w-full" asChild>
               <Link href="/register">Criar conta grátis</Link>
             </Button>
           </div>
@@ -940,21 +953,67 @@ function Pricing() {
                 <span className="pb-1.5 text-sm text-muted-foreground">/única vez</span>
               </div>
             </div>
-            <p className="mt-1 text-xs text-muted-foreground">
-              O preço de 20 apostas simples da Mega — uma única vez. Pix,
-              boleto ou cartão via Mercado Pago. Sem mensalidade, sem renovação.
+            <p className="mt-1 text-sm text-muted-foreground">
+              O preço de 20 apostas simples da Mega, uma única vez. Pix, boleto
+              ou cartão via Mercado Pago, sem mensalidade e sem renovação.
             </p>
             <div className="mt-8 flex-1">
               <PlanFeatureList features={PLAN_FEATURES} side="premium" />
             </div>
-            <Button className="mt-8 w-full" asChild>
-              <Link href="/register">
+            <Button size="lg" className="mt-8 w-full" asChild>
+              <Link href="/register?plano=premium">
                 <Crown aria-hidden className="size-4" />
-                Garantir acesso vitalício
+                Quero o Premium vitalício
               </Link>
             </Button>
+            <p className="mt-3 flex items-start gap-2 text-sm text-muted-foreground">
+              <ShieldCheck
+                aria-hidden
+                className="mt-0.5 size-4 shrink-0 text-brand-strong"
+                strokeWidth={2}
+              />
+              <span>
+                <strong className="font-medium text-foreground">
+                  {REFUND_DAYS} dias para desistir
+                </strong>{" "}
+                e receber 100% de volta, sem precisar justificar. É o direito
+                de arrependimento garantido pelo{" "}
+                <Link
+                  href="/termos#arrependimento"
+                  className="underline underline-offset-4 transition-colors hover:text-foreground"
+                >
+                  Código de Defesa do Consumidor
+                </Link>
+                .
+              </span>
+            </p>
           </div>
         </div>
+
+        <p className="mx-auto mt-10 max-w-2xl text-center text-sm leading-relaxed text-muted-foreground">
+          Dúvida antes de pagar? Escreva para{" "}
+          <a
+            href={`mailto:${COMPANY.supportEmail}`}
+            className="underline underline-offset-4 transition-colors hover:text-foreground"
+          >
+            {COMPANY.supportEmail}
+          </a>
+          . Ao criar sua conta você concorda com os{" "}
+          <Link
+            href="/termos"
+            className="underline underline-offset-4 transition-colors hover:text-foreground"
+          >
+            Termos de Uso
+          </Link>{" "}
+          e a{" "}
+          <Link
+            href="/privacidade"
+            className="underline underline-offset-4 transition-colors hover:text-foreground"
+          >
+            Política de Privacidade
+          </Link>
+          .
+        </p>
       </div>
     </section>
   );
